@@ -1,0 +1,43 @@
+:root{
+  --bg:#0e1522; --panel:#161f33; --panel2:#1e2a47; --accent:#ffb703;
+  --accent2:#4cc9f0; --good:#2ecc71; --bad:#e74c3c; --text:#eef2f9; --muted:#94a3b8;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,Arial,sans-serif;min-height:100vh}
+.wrap{max-width:480px;margin:0 auto;padding:24px 16px}
+.wrap.wide{max-width:1100px}
+h1{font-size:22px;margin:0 0 4px}
+h2{font-size:16px;color:var(--accent2);margin:18px 0 8px}
+.card{background:var(--panel);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.sub{color:var(--muted);font-size:13px;margin-bottom:16px}
+label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+select,input,button{width:100%;padding:11px;border-radius:10px;border:1px solid #2c3a5c;background:var(--panel2);color:var(--text);font-size:15px}
+button{background:var(--accent);color:#241a00;font-weight:700;border:none;cursor:pointer;margin-top:12px;transition:.15s}
+button:hover{filter:brightness(1.08)}
+button.secondary{background:var(--panel2);color:var(--text);border:1px solid #2c3a5c}
+button.danger{background:var(--bad);color:#fff}
+button:disabled{opacity:.45;cursor:not-allowed}
+.err{color:var(--bad);font-size:13px;margin-top:8px;min-height:16px}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700}
+.pill.good{background:rgba(46,204,113,.15);color:var(--good)}
+.pill.bad{background:rgba(231,76,60,.15);color:var(--bad)}
+.pill.info{background:rgba(76,201,240,.15);color:var(--accent2)}
+.grid30{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:12px 0}
+.tile{aspect-ratio:1;border-radius:8px;background:var(--panel2);border:2px solid #2c3a5c;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;cursor:default;position:relative;text-align:center;padding:2px}
+.tile b{font-size:14px}
+.tile.owned{border-color:var(--accent)}
+.tile.pickable{cursor:pointer}
+.tile.pickable:hover{filter:brightness(1.2)}
+.tile.bonus::after{content:'★';position:absolute;top:2px;right:4px;color:var(--accent);font-size:10px}
+.tile.special{border-style:dashed}
+.teamlist{display:flex;flex-wrap:wrap;gap:8px}
+.teamchip{flex:1 1 140px;background:var(--panel2);border-radius:10px;padding:8px 10px;font-size:13px}
+.teamchip b{display:block;font-size:15px}
+.log{font-size:12px;color:var(--muted);max-height:150px;overflow:auto;line-height:1.6}
+.center{text-align:center}
+.big{font-size:34px;font-weight:800;color:var(--accent)}
+.flex{display:flex;gap:10px}
+.flex>*{flex:1}
+.qtext{font-size:18px;font-weight:600;margin:6px 0 14px}
+.opt{display:block;width:100%;text-align:left;margin-top:8px}
+.badge-team{color:var(--accent2);font-weight:700}

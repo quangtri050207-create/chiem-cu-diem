@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chiếm Cứ Điểm</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="card center">
+    <h1>🏳️ Chiếm Cứ Điểm</h1>
+    <div class="sub">Đấu giá quân lệnh — trả lời đúng để chiếm đất</div>
+  </div>
+
+  <div class="card">
+    <h2>Đội chơi</h2>
+    <label>Chọn đội</label>
+    <select id="teamSel">
+      <option value="t1">Đội 1</option>
+      <option value="t2">Đội 2</option>
+      <option value="t3">Đội 3</option>
+      <option value="t4">Đội 4</option>
+      <option value="t5">Đội 5</option>
+      <option value="t6">Đội 6</option>
+    </select>
+    <button id="teamBtn">Vào trận với tư cách đội chơi</button>
+  </div>
+
+  <div class="card">
+    <h2>Ban tổ chức</h2>
+    <label>Mật khẩu host</label>
+    <input id="hostPw" type="password" placeholder="Nhập mật khẩu">
+    <button id="hostBtn" class="secondary">Vào bảng điều khiển host</button>
+    <div class="err" id="err"></div>
+  </div>
+
+  <div class="card center">
+    <div class="sub">Màn hình chiếu cho cả lớp:</div>
+    <a href="/screen.html" target="_blank"><button class="secondary">Mở /screen.html</button></a>
+  </div>
+</div>
+<script>
+document.getElementById('teamBtn').onclick = () => {
+  const t = document.getElementById('teamSel').value;
+  location.href = `/team.html?team=${t}`;
+};
+document.getElementById('hostBtn').onclick = () => {
+  const pw = document.getElementById('hostPw').value;
+  if (!pw) { document.getElementById('err').textContent = 'Vui lòng nhập mật khẩu.'; return; }
+  sessionStorage.setItem('hostPw', pw);
+  location.href = '/host.html';
+};
+</script>
+</body>
+</html>

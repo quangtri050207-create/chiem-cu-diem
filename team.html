@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Đội chơi — Chiếm Cứ Điểm</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1 id="teamName">Đội ...</h1>
+    <div class="sub">Quân lệnh còn lại: <b id="troops">-</b> &nbsp;|&nbsp; Điểm sao hiện tại: <b id="score">-</b></div>
+  </div>
+
+  <div class="card" id="phaseCard">
+    <h2 id="phaseTitle">Đang chờ ban tổ chức bắt đầu...</h2>
+    <div id="phaseBody"></div>
+  </div>
+
+  <div class="card">
+    <h2>Bảng xếp hạng</h2>
+    <div class="teamlist" id="scoreboard"></div>
+  </div>
+
+  <div class="card">
+    <h2>Diễn biến</h2>
+    <div class="log" id="log"></div>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const params = new URLSearchParams(location.search);
+const teamId = params.get('team');
+if (!teamId) location.href = '/';
+const socket = io();
+let state = null;
+
+socket.on('connect', () => socket.emit('join', { role: 'team', teamId }));
+socket.on('joined', d => { document.getElementById('teamName').textContent = d.teams[teamId].name; });
+socket.on('joinError', msg => alert(msg));
+socket.on('state', s => { state = s; render(); });
+
+function render() {
+  if (!state) return;
+  const me = state.teams[teamId];
+  document.getElementById('teamName').textContent = me.name;
+  document.getElementById('troops').textContent = me.troops;
+  const mySb = state.scoreboard.find(x => x.id === teamId);
+  document.getElementById('score').textContent = mySb ? mySb.score : 0;
+
+  document.getElementById('scoreboard').innerHTML = state.scoreboard.map((t,i) =>
+    `<div class="teamchip"><span class="pill info">#${i+1}</span> <b>${t.name}${t.id===teamId?' (bạn)':''}</b>${t.score}★ · ${t.troops} quân</div>`
+  ).join('');
+
+  document.getElementById('log').innerHTML = state.log.slice().reverse().map(l => `<div>• ${l}</div>`).join('');
+
+  const title = document.getElementById('phaseTitle');
+  const body = document.getElementById('phaseBody');
+  const isWinner = state.currentWinner === teamId;
+
+  if (state.phase === 'lobby') {
+    title.textContent = 'Chưa bắt đầu';
+    body.innerHTML = '<div class="sub">Chờ ban tổ chức nhấn "Bắt đầu trận đấu".</div>';
+
+  } else if (state.phase === 'bidding') {
+    title.textContent = `Vòng ${state.round}: Đấu giá bí mật`;
+    if (state.bidSubmitted[teamId]) {
+      const cnt = Object.values(state.bidSubmitted).filter(Boolean).length;
+      body.innerHTML = `<div class="pill good">Đã đặt: ${state.myBid} quân</div><div class="sub" style="margin-top:8px">Đang chờ các đội khác (${cnt}/6 đã đặt)...</div>`;
+    } else {
+      body.innerHTML = `
+        <label>Số quân lệnh muốn đặt (tối đa ${me.troops})</label>
+        <input type="number" id="bidInput" min="0" max="${me.troops}" value="0">
+        <button id="bidBtn">Xác nhận đặt cược (kín)</button>
+        <div class="sub" style="margin-top:6px">⚠️ Nếu đặt 0 quân, đội sẽ bị phạt 5 quân.</div>`;
+      setTimeout(() => {
+        const btn = document.getElementById('bidBtn');
+        if (btn) btn.onclick = () => {
+          const v = parseInt(document.getElementById('bidInput').value || '0', 10);
+          socket.emit('team:submitBid', { amount: v });
+        };
+      });
+    }
+
+  } else if (state.phase === 'tile_select') {
+    if (isWinner) {
+      title.textContent = '🎉 Đội bạn thắng đấu giá! Chọn 1 ô đất còn trống';
+      body.innerHTML = tilesGrid(state.tiles, t => !t.owner, 'team:selectTile', 'tileIdx');
+    } else {
+      title.textContent = `${state.teams[state.currentWinner].name} đang chọn ô đất...`;
+      body.innerHTML = '<div class="sub">Theo dõi màn hình chiếu nhé.</div>';
+    }
+
+  } else if (state.phase === 'question') {
+    if (isWinner && state.currentQuestion) {
+      title.textContent = `Ô ${state.currentTileIdx+1} — Trả lời để chiếm đất!`;
+      body.innerHTML = `<div class="qtext">${state.currentQuestion.question}</div>` +
+        state.currentQuestion.options.map((o,i) =>
+          `<button class="opt secondary" data-i="${i}">${String.fromCharCode(65+i)}. ${o}</button>`).join('');
+      setTimeout(() => {
+        document.querySelectorAll('.opt').forEach(b => b.onclick = () => {
+          document.querySelectorAll('.opt').forEach(x => x.disabled = true);
+          socket.emit('team:submitAnswer', { optionIndex: parseInt(b.dataset.i, 10) });
+        });
+      });
+    } else {
+      title.textContent = `${state.teams[state.currentWinner].name} đang trả lời câu hỏi ô ${state.currentTileIdx+1}...`;
+      body.innerHTML = '<div class="sub">Hồi hộp chờ kết quả nào!</div>';
+    }
+
+  } else if (state.phase === 'special') {
+    const sp = state.pendingSpecial;
+    if (sp && sp.teamId === teamId) {
+      if (sp.type === 'delete') {
+        title.textContent = '💥 Ô XÓA ĐẤT! Chọn 1 ô đối thủ để xóa quyền sở hữu';
+        body.innerHTML = tilesGrid(state.tiles, t => t.owner && t.owner !== teamId, 'team:specialDelete', 'tileIdx');
+      } else {
+        title.textContent = '🔄 Ô ĐỔI ĐẤT! Chọn 2 ô đã có chủ để hoán đổi';
+        body.innerHTML = tilesGrid(state.tiles, t => !!t.owner, null, null) +
+          '<div class="sub" id="swapHint" style="margin-top:8px">Đã chọn: 0/2</div>';
+        setTimeout(() => {
+          let picked = [];
+          document.querySelectorAll('.tile.pickable').forEach(el => {
+            el.onclick = () => {
+              const idx = parseInt(el.dataset.idx, 10);
+              if (picked.includes(idx)) return;
+              picked.push(idx);
+              el.style.outline = '3px solid var(--accent)';
+              document.getElementById('swapHint').textContent = `Đã chọn: ${picked.length}/2`;
+              if (picked.length === 2) socket.emit('team:specialSwap', { tileA: picked[0], tileB: picked[1] });
+            };
+          });
+        });
+      }
+    } else {
+      title.textContent = 'Hiệu ứng đặc biệt đang được xử lý...';
+      body.innerHTML = '<div class="sub">Theo dõi màn hình chiếu nhé.</div>';
+    }
+
+  } else if (state.phase === 'round_end') {
+    title.textContent = state.lastAnswerCorrect === false ? '❌ Trả lời sai — ô bỏ trống' :
+      (state.lastAnswerCorrect === true ? '✅ Chiếm đất thành công!' : 'Kết thúc vòng');
+    body.innerHTML = '<div class="sub">Chờ ban tổ chức bắt đầu vòng tiếp theo.</div>';
+
+  } else if (state.phase === 'game_over') {
+    title.textContent = '🏆 Trận đấu kết thúc!';
+    const top = state.scoreboard[0];
+    body.innerHTML = `<div class="center"><div class="big">${top.name} chiến thắng!</div><div class="sub">${top.score} sao</div></div>`;
+  }
+}
+
+function tilesGrid(tiles, pickableFn, event, key) {
+  return '<div class="grid30">' + tiles.map(t => {
+    const pickable = event && pickableFn(t);
+    const cls = ['tile'];
+    if (t.owner) cls.push('owned');
+    if (t.bonus) cls.push('bonus');
+    if (t.type !== 'hidden' && t.type !== 'normal') cls.push('special');
+    if (pickable) cls.push('pickable');
+    const label = t.owner ? state.teams[t.owner].name.replace('Đội ', 'Đ') : `${t.star}★`;
+    return `<div class="${cls.join(' ')}" data-idx="${t.idx}"><b>${t.idx+1}</b><span>${label}</span></div>`;
+  }).join('') + '</div>' + (event ? attachHandlers(event, key) : '');
+}
+function attachHandlers(event, key) {
+  setTimeout(() => {
+    document.querySelectorAll('.tile.pickable').forEach(el => {
+      el.onclick = () => socket.emit(event, { [key]: parseInt(el.dataset.idx, 10) });
+    });
+  });
+  return '';
+}
+</script>
+</body>
+</html>

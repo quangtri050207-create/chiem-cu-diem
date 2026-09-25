@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Host — Chiếm Cứ Điểm</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>🎛️ Bảng điều khiển host</h1>
+    <div class="sub">Vòng hiện tại: <b id="round">-</b> · Giai đoạn: <b id="phase">-</b></div>
+  </div>
+
+  <div class="card">
+    <h2>Điều khiển</h2>
+    <button id="startBtn">▶️ Bắt đầu trận đấu (reset toàn bộ)</button>
+    <button id="revealBtn" class="secondary">⏱️ Buộc mở kết quả đấu giá ngay (đội chưa đặt = 0)</button>
+    <button id="nextBtn" class="secondary">➡️ Bắt đầu vòng tiếp theo</button>
+    <button id="resetBtn" class="danger">♻️ Reset toàn bộ trận đấu</button>
+  </div>
+
+  <div class="card">
+    <h2>Đổi tên đội</h2>
+    <div id="teamNames"></div>
+  </div>
+
+  <div class="card">
+    <h2>Bảng đất</h2>
+    <div id="board"></div>
+  </div>
+
+  <div class="card">
+    <h2>Bảng xếp hạng</h2>
+    <div class="teamlist" id="scoreboard"></div>
+  </div>
+
+  <div class="card">
+    <h2>Diễn biến</h2>
+    <div class="log" id="log"></div>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const pw = sessionStorage.getItem('hostPw');
+if (!pw) location.href = '/';
+const socket = io();
+socket.on('connect', () => socket.emit('join', { role: 'host', password: pw }));
+socket.on('joinError', msg => { alert(msg); location.href = '/'; });
+socket.on('state', render);
+
+document.getElementById('startBtn').onclick = () => socket.emit('host:startGame');
+document.getElementById('revealBtn').onclick = () => socket.emit('host:forceReveal');
+document.getElementById('nextBtn').onclick = () => socket.emit('host:nextRound');
+document.getElementById('resetBtn').onclick = () => { if (confirm('Reset toàn bộ trận đấu?')) socket.emit('host:resetGame'); };
+
+function render(s) {
+  document.getElementById('round').textContent = s.round;
+  const phaseNames = { lobby:'Chờ bắt đầu', bidding:'Đấu giá', tile_select:'Chọn ô', question:'Trả lời câu hỏi', special:'Hiệu ứng đặc biệt', round_end:'Hết vòng', game_over:'Kết thúc' };
+  document.getElementById('phase').textContent = phaseNames[s.phase] || s.phase;
+
+  document.getElementById('teamNames').innerHTML = Object.values(s.teams).map(t =>
+    `<div class="flex" style="margin-bottom:6px"><input value="${t.name}" data-id="${t.id}" class="teamNameInput"><span style="align-self:center;font-size:12px;color:var(--muted);white-space:nowrap">${t.troops} quân</span></div>`
+  ).join('');
+  document.querySelectorAll('.teamNameInput').forEach(inp => {
+    inp.onchange = () => socket.emit('host:setTeamName', { teamId: inp.dataset.id, name: inp.value });
+  });
+
+  document.getElementById('board').innerHTML = '<div class="grid30">' + s.tiles.map(t => {
+    const cls = ['tile'];
+    if (t.owner) cls.push('owned');
+    if (t.bonus) cls.push('bonus');
+    if (t.type !== 'hidden' && t.type !== 'normal') cls.push('special');
+    const label = t.owner ? s.teams[t.owner].name : `${t.star}★ (${t.type})`;
+    return `<div class="${cls.join(' ')}"><b>${t.idx+1}</b><span style="font-size:10px">${label}</span></div>`;
+  }).join('') + '</div>';
+
+  document.getElementById('scoreboard').innerHTML = s.scoreboard.map((t,i) =>
+    `<div class="teamchip"><span class="pill info">#${i+1}</span> <b>${t.name}</b>${t.score}★ · ${t.troops} quân</div>`
+  ).join('');
+
+  document.getElementById('log').innerHTML = s.log.slice().reverse().map(l => `<div>• ${l}</div>`).join('');
+}
+</script>
+</body>
+</html>
