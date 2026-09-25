@@ -1,56 +1,84 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Chiếm Cứ Điểm</title>
-<link rel="stylesheet" href="/css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chiếm Cứ Điểm</title>
+  <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
-<div class="wrap">
-  <div class="card center">
-    <h1>🏳️ Chiếm Cứ Điểm</h1>
-    <div class="sub">Đấu giá quân lệnh — trả lời đúng để chiếm đất</div>
+  <div class="wrap">
+    <div class="card center">
+      <div class="pill info">TACTICAL FIELD LOGIN</div>
+      <h1>⚔️ Chiếm Cứ Điểm</h1>
+      <div class="sub">Một link cho tất cả đội chơi. Mỗi đội đăng nhập bằng tài khoản riêng.</div>
+    </div>
+
+    <div class="card">
+      <h2>Đăng nhập đội chơi</h2>
+      <label>Tên đăng nhập</label>
+      <input id="username" type="text" placeholder="vd: doi1" />
+
+      <label>Mật khẩu</label>
+      <input id="password" type="password" placeholder="Nhập mật khẩu đội" />
+
+      <button id="loginBtn">Vào trận</button>
+      <div class="err" id="loginErr"></div>
+
+      <div class="sub" style="margin-top: 16px;">
+        Tài khoản mặc định:
+        <br />doi1 / doi1@123
+        <br />doi2 / doi2@123
+        <br />doi3 / doi3@123
+        <br />doi4 / doi4@123
+        <br />doi5 / doi5@123
+        <br />doi6 / doi6@123
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Ban tổ chức</h2>
+      <label>Mật khẩu host</label>
+      <input id="hostPw" type="password" placeholder="Nhập mật khẩu host" />
+      <button id="hostBtn" class="secondary">Vào bảng điều khiển host</button>
+      <div class="err" id="err"></div>
+    </div>
+
+    <div class="card center">
+      <div class="sub">Màn hình chiếu cho cả lớp:</div>
+      <a href="/screen.html" target="_blank"><button class="secondary">Mở /screen.html</button></a>
+    </div>
   </div>
 
-  <div class="card">
-    <h2>Đội chơi</h2>
-    <label>Chọn đội</label>
-    <select id="teamSel">
-      <option value="t1">Đội 1</option>
-      <option value="t2">Đội 2</option>
-      <option value="t3">Đội 3</option>
-      <option value="t4">Đội 4</option>
-      <option value="t5">Đội 5</option>
-      <option value="t6">Đội 6</option>
-    </select>
-    <button id="teamBtn">Vào trận với tư cách đội chơi</button>
-  </div>
+  <script>
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const loginErr = document.getElementById('loginErr');
 
-  <div class="card">
-    <h2>Ban tổ chức</h2>
-    <label>Mật khẩu host</label>
-    <input id="hostPw" type="password" placeholder="Nhập mật khẩu">
-    <button id="hostBtn" class="secondary">Vào bảng điều khiển host</button>
-    <div class="err" id="err"></div>
-  </div>
+    document.getElementById('loginBtn').onclick = () => {
+      const username = (usernameInput.value || '').trim();
+      const password = (passwordInput.value || '').trim();
 
-  <div class="card center">
-    <div class="sub">Màn hình chiếu cho cả lớp:</div>
-    <a href="/screen.html" target="_blank"><button class="secondary">Mở /screen.html</button></a>
-  </div>
-</div>
-<script>
-document.getElementById('teamBtn').onclick = () => {
-  const t = document.getElementById('teamSel').value;
-  location.href = `/team.html?team=${t}`;
-};
-document.getElementById('hostBtn').onclick = () => {
-  const pw = document.getElementById('hostPw').value;
-  if (!pw) { document.getElementById('err').textContent = 'Vui lòng nhập mật khẩu.'; return; }
-  sessionStorage.setItem('hostPw', pw);
-  location.href = '/host.html';
-};
-</script>
+      if (!username || !password) {
+        loginErr.textContent = 'Vui lòng nhập tên đăng nhập và mật khẩu.';
+        return;
+      }
+
+      sessionStorage.setItem('teamUsername', username);
+      sessionStorage.setItem('teamPassword', password);
+      loginErr.textContent = '';
+      location.href = '/team.html';
+    };
+
+    document.getElementById('hostBtn').onclick = () => {
+      const pw = document.getElementById('hostPw').value;
+      if (!pw) {
+        document.getElementById('err').textContent = 'Vui lòng nhập mật khẩu host.';
+        return;
+      }
+      sessionStorage.setItem('hostPw', pw);
+      location.href = '/host.html';
+    };
+  </script>
 </body>
 </html>
