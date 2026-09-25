@@ -8,7 +8,9 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-app.use(express.static(path.join(__dirname, 'public')));
+// Các file HTML/CSS/JS của dự án nằm ở thư mục gốc repository.
+// Không dùng thư mục "public" vì repository hiện không có thư mục này.
+app.use(express.static(__dirname, { index: 'index.html' }));
 
 // ---------- CONFIG ----------
 const ROWS = 5, COLS = 6, TOTAL = ROWS * COLS;
@@ -360,4 +362,4 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => console.log(`Chiếm Cứ Điểm chạy tại http://localhost:${PORT} (mật khẩu host: ${HOST_PASSWORD})`));
+server.listen(PORT, '0.0.0.0', () => console.log(`Chiếm Cứ Điểm chạy tại cổng ${PORT} (mật khẩu host: ${HOST_PASSWORD})`));
