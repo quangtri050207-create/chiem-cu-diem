@@ -25,19 +25,6 @@
       <button id="loginBtn">Vào trận</button>
       <div class="err" id="loginErr"></div>
     </div>
-
-    <div class="card">
-      <h2>Ban tổ chức</h2>
-      <label>Mật khẩu host</label>
-      <input id="hostPw" type="password" placeholder="Nhập mật khẩu host" />
-      <button id="hostBtn" class="secondary">Vào bảng điều khiển host</button>
-      <div class="err" id="err"></div>
-    </div>
-
-    <div class="card center">
-      <div class="sub">Màn hình chiếu cho cả lớp:</div>
-      <a href="/screen.html" target="_blank"><button class="secondary">Mở /screen.html</button></a>
-    </div>
   </div>
 
   <script>
@@ -58,16 +45,6 @@
       sessionStorage.setItem('teamPassword', password);
       loginErr.textContent = '';
       location.href = '/team.html';
-    };
-
-    document.getElementById('hostBtn').onclick = () => {
-      const pw = document.getElementById('hostPw').value;
-      if (!pw) {
-        document.getElementById('err').textContent = 'Vui lòng nhập mật khẩu host.';
-        return;
-      }
-      sessionStorage.setItem('hostPw', pw);
-      location.href = '/host.html';
     };
   </script>
 </body>
