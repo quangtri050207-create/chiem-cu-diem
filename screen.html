@@ -1,77 +1,96 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Màn hình chiếu — Chiếm Cứ Điểm</title>
-<link rel="stylesheet" href="/css/style.css">
-<style>
-  body{padding:20px}
-  .wrap.wide{display:grid;grid-template-columns:2fr 1fr;gap:16px}
-  .grid30 .tile{font-size:14px}
-  .grid30 .tile b{font-size:18px}
-  #status{font-size:20px;font-weight:700;color:var(--accent2);text-align:center;margin-bottom:10px}
-  @media(max-width:900px){.wrap.wide{grid-template-columns:1fr}}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Màn hình chiếu — Chiếm Cứ Điểm</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    body { padding: 18px; }
+    .wrap.wide { display: grid; grid-template-columns: 1.8fr 1fr; gap: 16px; }
+    .grid30 .tile { font-size: 14px; }
+    .grid30 .tile b { font-size: 18px; }
+    #status { font-size: 20px; font-weight: 700; color: var(--accent2); text-align: center; margin-bottom: 10px; }
+    #countdown { display: inline-block; margin-top: 8px; color: var(--accent); font-size: 24px; font-weight: 800; }
+    @media (max-width: 900px) { .wrap.wide { grid-template-columns: 1fr; } }
+  </style>
 </head>
 <body>
-<div class="wrap wide">
-  <div>
-    <div class="card">
-      <h1>🏳️ Chiếm Cứ Điểm</h1>
-      <div id="status">Đang chờ...</div>
-      <div id="board"></div>
+  <div class="wrap wide">
+    <div>
+      <div class="card">
+        <h1>⚔️ Chiếm Cứ Điểm</h1>
+        <div id="status">Đang chờ...</div>
+        <div id="countdown">-</div>
+        <div id="board"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <h2>Bảng xếp hạng</h2>
+        <div class="teamlist" id="scoreboard"></div>
+      </div>
+      <div class="card">
+        <h2>Diễn biến</h2>
+        <div class="log" id="log"></div>
+      </div>
     </div>
   </div>
-  <div>
-    <div class="card">
-      <h2>Bảng xếp hạng</h2>
-      <div class="teamlist" id="scoreboard"></div>
-    </div>
-    <div class="card">
-      <h2>Diễn biến</h2>
-      <div class="log" id="log"></div>
-    </div>
-  </div>
-</div>
-<script src="/socket.io/socket.io.js"></script>
-<script>
-const socket = io();
-socket.on('connect', () => socket.emit('join', { role: 'screen' }));
-socket.on('state', s => render(s));
 
-function render(s) {
-  const statusMap = {
-    lobby: 'Chờ ban tổ chức bắt đầu trận đấu',
-    bidding: `Vòng ${s.round}: Các đội đang đấu giá bí mật (${Object.values(s.bidSubmitted).filter(Boolean).length}/6)`,
-    tile_select: `${s.teams[s.currentWinner].name} thắng đấu giá — đang chọn ô đất...`,
-    question: s.currentTileIdx!=null ? `${s.teams[s.currentWinner].name} đang trả lời câu hỏi ô ${s.currentTileIdx+1}` : '',
-    special: 'Đang xử lý hiệu ứng đặc biệt...',
-    round_end: 'Kết thúc vòng — chờ ban tổ chức tiếp tục',
-    game_over: '🏆 Trận đấu đã kết thúc!'
-  };
-  document.getElementById('status').textContent = statusMap[s.phase] || '';
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    socket.on('connect', () => socket.emit('join', { role: 'screen' }));
+    socket.on('state', s => render(s));
 
-  document.getElementById('board').innerHTML = '<div class="grid30">' + s.tiles.map(t => {
-    const cls = ['tile'];
-    if (t.owner) cls.push('owned');
-    if (t.bonus) cls.push('bonus');
-    if (t.type !== 'hidden' && t.type !== 'normal') cls.push('special');
-    if (s.currentTileIdx === t.idx) cls.push('pickable');
-    const label = t.owner ? s.teams[t.owner].name : `${t.star}★`;
-    return `<div class="${cls.join(' ')}"><b>${t.idx+1}</b><span>${label}</span></div>`;
-  }).join('') + '</div>';
+    function render(s) {
+      const statusMap = {
+        lobby: 'Chờ ban tổ chức bắt đầu trận đấu',
+        bidding: `Vòng ${s.round}: Các đội đang đấu giá bí mật (${Object.values(s.bidSubmitted).filter(Boolean).length}/6)`,
+        tile_select: `${s.teams[s.currentWinner].name} thắng đấu giá — đang chọn ô đất...`,
+        question: s.currentTileIdx != null ? `${s.teams[s.currentWinner].name} đang trả lời câu hỏi ô ${s.currentTileIdx + 1}` : '',
+        special: 'Đang xử lý hiệu ứng đặc biệt...',
+        round_end: 'Kết thúc vòng — chờ ban tổ chức tiếp tục',
+        game_over: '🏆 Trận đấu đã kết thúc!'
+      };
+      document.getElementById('status').textContent = statusMap[s.phase] || '';
 
-  document.getElementById('scoreboard').innerHTML = s.scoreboard.map((t,i) =>
-    `<div class="teamchip"><span class="pill info">#${i+1}</span> <b>${t.name}</b>${t.score}★ · ${t.troops} quân</div>`
-  ).join('');
+      if (s.phase === 'bidding' && s.bidEndsAt) {
+        const remaining = Math.max(0, Math.ceil((s.bidEndsAt - Date.now()) / 1000));
+        document.getElementById('countdown').textContent = `Đặt quân: ${remaining}s`;
+      } else {
+        document.getElementById('countdown').textContent = '-';
+      }
 
-  document.getElementById('log').innerHTML = s.log.slice().reverse().map(l => `<div>• ${l}</div>`).join('');
+      document.getElementById('board').innerHTML = '<div class="grid30">' + s.tiles.map(t => {
+        const cls = ['tile'];
+        if (t.owner) cls.push('owned');
+        if (t.bonus) cls.push('bonus');
+        if (t.type !== 'hidden' && t.type !== 'normal') cls.push('special');
+        if (s.currentTileIdx === t.idx) cls.push('pickable');
+        const label = t.owner ? s.teams[t.owner].name : `${t.star}★`;
+        return `<div class="${cls.join(' ')}"><b>${t.idx + 1}</b><span>${label}</span></div>`;
+      }).join('') + '</div>';
 
-  if (s.phase === 'question' && s.currentQuestion) {
-    document.getElementById('status').innerHTML += `<div class="qtext" style="font-size:16px;margin-top:8px">${s.currentQuestion.question}</div>`;
-  }
-}
-</script>
+      document.getElementById('scoreboard').innerHTML = s.scoreboard.map((t, i) =>
+        `<div class="teamchip"><span class="pill info">#${i + 1}</span> <b>${t.name}</b>${t.score}★ · ${t.troops} quân</div>`
+      ).join('');
+
+      document.getElementById('log').innerHTML = s.log.slice().reverse().map(l => `<div>• ${l}</div>`).join('');
+
+      if (s.phase === 'question' && s.currentQuestion) {
+        document.getElementById('status').innerHTML += `<div class="qtext" style="font-size:16px;margin-top:8px">${s.currentQuestion.question}</div>`;
+      }
+    }
+
+    setInterval(() => {
+      const statusNode = document.getElementById('status');
+      const countdownNode = document.getElementById('countdown');
+      if (statusNode && statusNode.dataset.state === 'bidding') {
+        // no-op; keep UI refreshed on state updates
+      }
+    }, 1000);
+  </script>
 </body>
 </html>
