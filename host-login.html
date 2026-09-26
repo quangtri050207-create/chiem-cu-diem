@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Host Login — Chiếm Cứ Điểm</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <div class="card center">
+      <div class="pill info">HOST CONTROL PANEL</div>
+      <h1>🎛️ Chiếm Cứ Điểm</h1>
+    </div>
+
+    <div class="card">
+      <h2>Đăng nhập ban tổ chức</h2>
+      <label>Mật khẩu host</label>
+      <input id="hostPassword" type="password" placeholder="Nhập mật khẩu (mặc định: admin123)" />
+
+      <button id="hostLoginBtn">Vào bảng điều khiển</button>
+      <div class="err" id="hostLoginErr"></div>
+    </div>
+  </div>
+
+  <script>
+    const hostPasswordInput = document.getElementById('hostPassword');
+    const hostLoginErr = document.getElementById('hostLoginErr');
+
+    document.getElementById('hostLoginBtn').onclick = () => {
+      const hostPw = (hostPasswordInput.value || '').trim();
+
+      if (!hostPw) {
+        hostLoginErr.textContent = 'Vui lòng nhập mật khẩu.';
+        return;
+      }
+
+      sessionStorage.setItem('hostPw', hostPw);
+      hostLoginErr.textContent = '';
+      location.href = '/host.html';
+    };
+  </script>
+</body>
+</html>
