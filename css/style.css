@@ -1,11 +1,242 @@
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap');
-:root{--bg:#08120f;--panel:#14231c;--panel2:#1d3328;--accent:#e5bd5c;--accent2:#92e0b0;--good:#6ed28d;--bad:#e66b62;--text:#f1f6ec;--muted:#a6b8aa;--line:rgba(178,197,157,.24);--map:#182d23;--team-t1:#ff6b6b;--team-t2:#4ecdc4;--team-t3:#ffe66d;--team-t4:#95e1d3;--team-t5:#f38181;--team-t6:#aa96da}
-*{box-sizing:border-box}html{min-height:100%;background:var(--bg)}body{margin:0;min-height:100vh;color:var(--text);font-family:'Be Vietnam Pro','Segoe UI',sans-serif;background:radial-gradient(ellipse at 20% 0%,rgba(116,151,81,.2),transparent 32rem),linear-gradient(135deg,#07100b,#132218 48%,#080e09)}
-.wrap{max-width:560px;margin:0 auto;padding:24px 16px 56px}.wrap.wide{max-width:1220px}h1{margin:0 0 6px;font-size:clamp(23px,4vw,38px);font-weight:800}h2{margin:18px 0 10px;color:var(--accent);font-size:14px;letter-spacing:.12em;text-transform:uppercase}.sub{color:var(--muted);font-size:13px;line-height:1.6}.center{text-align:center}.card{position:relative;margin-bottom:16px;padding:20px;overflow:hidden;border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,rgba(35,59,43,.97),rgba(13,25,17,.97));box-shadow:0 18px 42px rgba(0,0,0,.3),inset 0 1px rgba(255,255,255,.05)}.card::after{content:'▧  SECURE TACTICAL CHANNEL';position:absolute;top:8px;right:14px;color:rgba(216,180,90,.32);font-size:8px;letter-spacing:.1em}
-label{display:block;margin:12px 0 5px;color:var(--muted);font-size:12px}select,input,button{width:100%;min-height:44px;border:1px solid var(--line);border-radius:9px;color:var(--text);background:#17261b;font:inherit}select,input{padding:0 12px;outline:none}button{margin-top:11px;padding:0 14px;color:#171407;background:linear-gradient(135deg,#e4c56d,#ae8737);font-weight:800;cursor:pointer;transition:.18s}button:hover{filter:brightness(1.1);transform:translateY(-2px)}button.secondary{color:var(--text);background:#263b2d}button.danger{color:#fff;background:#963d39}button:disabled{opacity:.45;cursor:not-allowed}.flex{display:flex;gap:10px}.flex>*{flex:1}
-.grid30{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px;margin:14px 0;padding:14px;border:1px solid rgba(177,198,147,.28);border-radius:16px;background:linear-gradient(145deg,#284b36,#10251b);box-shadow:inset 0 0 35px rgba(0,0,0,.3)}
-.tile{position:relative;display:flex;aspect-ratio:1;align-items:center;justify-content:center;flex-direction:column;padding:5px;overflow:hidden;border:2px solid rgba(172,198,151,.38);border-radius:12px;color:#d9e7d2;background:linear-gradient(145deg,rgba(61,102,69,.95),rgba(20,48,30,.98));box-shadow:inset 0 0 12px rgba(0,0,0,.22),0 4px 10px rgba(0,0,0,.16);transition:.18s}.tile::before{content:'';position:absolute;inset:0;opacity:.12;background:repeating-linear-gradient(135deg,transparent 0 5px,#d5dfbd 6px 7px,transparent 8px 13px);pointer-events:none}.tile b{z-index:1;color:var(--text);font-size:15px}.tile span{z-index:1;max-width:100%;overflow:hidden;font-size:9px;text-align:center;text-overflow:ellipsis;white-space:nowrap}.tile:hover{border-color:var(--accent);transform:translateY(-3px);filter:brightness(1.12)}.tile.owned{border-color:var(--accent)}.tile.owned.team-t1{background:linear-gradient(145deg,rgba(255,107,107,.65),rgba(139,40,40,.9));border-color:var(--team-t1)}.tile.owned.team-t2{background:linear-gradient(145deg,rgba(78,205,196,.65),rgba(30,90,85,.9));border-color:var(--team-t2)}.tile.owned.team-t3{background:linear-gradient(145deg,rgba(255,230,109,.65),rgba(180,140,30,.9));border-color:var(--team-t3)}.tile.owned.team-t4{background:linear-gradient(145deg,rgba(149,225,211,.65),rgba(70,140,120,.9));border-color:var(--team-t4)}.tile.owned.team-t5{background:linear-gradient(145deg,rgba(243,129,129,.65),rgba(150,50,50,.9));border-color:var(--team-t5)}.tile.owned.team-t6{background:linear-gradient(145deg,rgba(170,150,218,.65),rgba(100,70,150,.9));border-color:var(--team-t6)}.tile.pickable{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(142,209,162,.2),0 0 20px rgba(142,209,162,.3);cursor:pointer;animation:targetPulse 1.8s infinite}.tile.special{border-style:dashed;border-color:#d09be8}.tile.bonus::after{content:'★';position:absolute;top:3px;right:5px;color:var(--accent);font-size:10px}
-.teamlist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.teamchip{position:relative;min-height:68px;padding:10px 10px 10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);font-size:12px}.teamchip::before{content:'';position:absolute;inset:9px auto 9px 0;width:4px;background:var(--accent2)}.teamchip.team-t1::before{background:var(--team-t1)}.teamchip.team-t2::before{background:var(--team-t2)}.teamchip.team-t3::before{background:var(--team-t3)}.teamchip.team-t4::before{background:var(--team-t4)}.teamchip.team-t5::before{background:var(--team-t5)}.teamchip.team-t6::before{background:var(--team-t6)}.teamchip b{display:block;margin:4px 0;font-size:14px}.pill{display:inline-block;padding:4px 9px;border-radius:99px;font-size:11px;font-weight:800}.pill.good{color:var(--good);background:rgba(110,210,141,.13)}.pill.bad{color:var(--bad);background:rgba(230,107,98,.13)}.pill.info{color:var(--accent2);background:rgba(142,209,162,.13)}.log{max-height:210px;overflow:auto;color:var(--muted);font-size:12px;line-height:1.7}.log div{padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06)}.big{color:var(--accent);font-size:38px;font-weight:800}.qtext{margin:8px 0 15px;font-size:18px;font-weight:700;line-height:1.5}.opt{display:block;margin-top:8px;text-align:left}.err{min-height:18px;margin-top:8px;color:var(--bad);font-size:13px}
-.tile span{font-size:0;white-space:normal;line-height:1.15;overflow:visible;text-overflow:clip}.tile span::after{font-size:clamp(7px,1.15vw,11px);font-weight:700;color:#f5f7ed;display:block;max-width:100%;white-space:normal;line-height:1.12}.tile:nth-child(1) span::after{content:'Pác Bó'}.tile:nth-child(2) span::after{content:'Tân Trào'}.tile:nth-child(3) span::after{content:'ATK Định Hóa'}.tile:nth-child(4) span::after{content:'Chợ Đồn'}.tile:nth-child(5) span::after{content:'Việt Bắc'}.tile:nth-child(6) span::after{content:'Chiến khu Ba Đình'}.tile:nth-child(7) span::after{content:'Chiến khu Vần'}.tile:nth-child(8) span::after{content:'Chiến khu Đông Triều'}.tile:nth-child(9) span::after{content:'Chiến khu D'}.tile:nth-child(10) span::after{content:'Đồng Tháp Mười'}.tile:nth-child(11) span::after{content:'U Minh'}.tile:nth-child(12) span::after{content:'Điện Biên Phủ'}.tile:nth-child(13) span::after{content:'Vĩnh Linh'}.tile:nth-child(14) span::after{content:'Vịnh Mốc'}.tile:nth-child(15) span::after{content:'Khe Sanh'}.tile:nth-child(16) span::after{content:'Đường Trường Sơn'}.tile:nth-child(17) span::after{content:'Ngã ba Đồng Lộc'}.tile:nth-child(18) span::after{content:'Hang Tám Cô'}.tile:nth-child(19) span::after{content:'Củ Chi'}.tile:nth-child(20) span::after{content:'Trung ương Cục miền Nam'}.tile:nth-child(21) span::after{content:'Dương Minh Châu'}.tile:nth-child(22) span::after{content:'Rừng Sác'}.tile:nth-child(23) span::after{content:'Bến Dược'}.tile:nth-child(24) span::after{content:'Thành cổ Quảng Trị'}.tile:nth-child(25) span::after{content:'Quảng Trị'}.tile:nth-child(26) span::after{content:'Tây Nguyên'}.tile:nth-child(27) span::after{content:'Đường 9 – Nam Lào'}.tile:nth-child(28) span::after{content:'Xuân Lộc'}.tile:nth-child(29) span::after{content:'Dinh Độc Lập'}.tile:nth-child(30) span::after{content:'Sài Gòn'}
-@keyframes targetPulse{0%,100%{box-shadow:0 0 0 2px rgba(142,209,162,.12)}50%{box-shadow:0 0 0 5px rgba(142,209,162,.04),0 0 24px rgba(142,209,162,.3)}}
-@media(max-width:640px){.wrap{width:calc(100% - 20px);padding-top:15px}.card{padding:16px}.grid30{gap:5px;padding:8px}.tile{border-radius:7px}.tile b{font-size:11px}.tile span::after{font-size:6.5px}.teamlist{grid-template-columns:1fr}.card::after{display:none}}
+
+:root {
+  --bg: #08120f;
+  --panel: rgba(25, 35, 25, .94);
+  --panel2: #1d3328;
+  --accent: #e5bd5c;
+  --accent2: #92e0b0;
+  --good: #6ed28d;
+  --bad: #e66b62;
+  --text: #f1f6ec;
+  --muted: #a6b8aa;
+  --line: rgba(178, 197, 157, .24);
+  --map: #182d23;
+  --team-t1: #ff6b6b;
+  --team-t2: #4ecdc4;
+  --team-t3: #ffe66d;
+  --team-t4: #95e1d3;
+  --team-t5: #f38181;
+  --team-t6: #aa96da;
+}
+
+* { box-sizing: border-box; }
+
+html { min-height: 100%; background: var(--bg); }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text);
+  font-family: 'Be Vietnam Pro', 'Segoe UI', sans-serif;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(116, 151, 81, .2), transparent 32rem),
+    linear-gradient(135deg, #07100b, #132218 48%, #080e09);
+}
+
+.wrap { max-width: 560px; margin: 0 auto; padding: 24px 16px 56px; }
+.wrap.wide { max-width: 1220px; }
+
+h1 { margin: 0 0 6px; font-size: clamp(23px, 4vw, 38px); font-weight: 800; }
+h2 { margin: 18px 0 10px; color: var(--accent); font-size: 14px; letter-spacing: .12em; text-transform: uppercase; }
+.sub { color: var(--muted); font-size: 13px; line-height: 1.6; }
+.center { text-align: center; }
+
+.card {
+  position: relative;
+  margin-bottom: 16px;
+  padding: 20px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(35, 59, 43, .97), rgba(13, 25, 17, .97));
+  box-shadow: 0 18px 42px rgba(0, 0, 0, .3), inset 0 1px rgba(255,255,255,.05);
+}
+
+.card::after {
+  content: '▧  SECURE TACTICAL CHANNEL';
+  position: absolute;
+  top: 8px;
+  right: 14px;
+  color: rgba(216, 180, 90, .32);
+  font-size: 8px;
+  letter-spacing: .1em;
+}
+
+label { display: block; margin: 12px 0 5px; color: var(--muted); font-size: 12px; }
+select, input, button { width: 100%; min-height: 44px; border: 1px solid var(--line); border-radius: 9px; color: var(--text); background: #17261b; font: inherit; }
+select, input { padding: 0 12px; outline: none; }
+button { margin-top: 11px; padding: 0 14px; color: #171407; background: linear-gradient(135deg, #e4c56d, #ae8737); font-weight: 800; cursor: pointer; transition: .18s; }
+button:hover { filter: brightness(1.1); transform: translateY(-2px); }
+button.secondary { color: var(--text); background: #263b2d; }
+button.danger { color: #fff; background: #963d39; }
+button:disabled { opacity: .45; cursor: not-allowed; }
+
+.flex { display: flex; gap: 10px; }
+.flex > * { flex: 1; }
+
+.grid30 {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 9px;
+  margin: 14px 0;
+  padding: 14px;
+  border: 1px solid rgba(177, 198, 147, .28);
+  border-radius: 16px;
+  background: linear-gradient(145deg, #284b36, #10251b);
+  box-shadow: inset 0 0 35px rgba(0, 0, 0, .3);
+}
+
+.tile {
+  position: relative;
+  display: flex;
+  aspect-ratio: 1;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 5px;
+  overflow: hidden;
+  border: 2px solid rgba(172, 198, 151, .38);
+  border-radius: 12px;
+  color: #d9e7d2;
+  background: linear-gradient(145deg, rgba(61, 102, 69, .95), rgba(20, 48, 30, .98));
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, .22), 0 4px 10px rgba(0, 0, 0, .16);
+  transition: .18s ease;
+}
+
+.tile::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: .12;
+  background: repeating-linear-gradient(135deg, transparent 0 5px, #d5dfbd 6px 7px, transparent 8px 13px);
+  pointer-events: none;
+}
+
+.tile b {
+  z-index: 1;
+  color: var(--text);
+  font-size: 15px;
+}
+
+.tile span {
+  z-index: 1;
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 9px;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tile:hover {
+  border-color: var(--accent);
+  transform: translateY(-3px);
+  filter: brightness(1.12);
+}
+
+.tile.owned { border-color: var(--accent); }
+.tile.owned.team-t1 { background: linear-gradient(145deg, rgba(255, 107, 107, .65), rgba(139, 40, 40, .9)); border-color: var(--team-t1); }
+.tile.owned.team-t2 { background: linear-gradient(145deg, rgba(78, 205, 196, .65), rgba(30, 90, 85, .9)); border-color: var(--team-t2); }
+.tile.owned.team-t3 { background: linear-gradient(145deg, rgba(255, 230, 109, .65), rgba(180, 140, 30, .9)); border-color: var(--team-t3); }
+.tile.owned.team-t4 { background: linear-gradient(145deg, rgba(149, 225, 211, .65), rgba(70, 140, 120, .9)); border-color: var(--team-t4); }
+.tile.owned.team-t5 { background: linear-gradient(145deg, rgba(243, 129, 129, .65), rgba(150, 50, 50, .9)); border-color: var(--team-t5); }
+.tile.owned.team-t6 { background: linear-gradient(145deg, rgba(170, 150, 218, .65), rgba(100, 70, 150, .9)); border-color: var(--team-t6); }
+
+.tile.pickable {
+  border-color: var(--accent2);
+  box-shadow: 0 0 0 3px rgba(142, 209, 162, .2), 0 0 20px rgba(142, 209, 162, .3);
+  cursor: pointer;
+  animation: targetPulse 1.8s infinite;
+}
+
+.tile.special { border-style: dashed; border-color: #d09be8; }
+.tile.bonus::after { content: '★'; position: absolute; top: 3px; right: 5px; color: var(--accent); font-size: 10px; }
+
+.teamlist { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+.teamchip { position: relative; min-height: 68px; padding: 10px 10px 10px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel2); font-size: 12px; }
+.teamchip::before { content: ''; position: absolute; inset: 9px auto 9px 0; width: 4px; background: var(--accent2); }
+.teamchip.team-t1::before { background: var(--team-t1); }
+.teamchip.team-t2::before { background: var(--team-t2); }
+.teamchip.team-t3::before { background: var(--team-t3); }
+.teamchip.team-t4::before { background: var(--team-t4); }
+.teamchip.team-t5::before { background: var(--team-t5); }
+.teamchip.team-t6::before { background: var(--team-t6); }
+.teamchip b { display: block; margin: 4px 0; font-size: 14px; }
+
+.pill { display: inline-block; padding: 4px 9px; border-radius: 99px; font-size: 11px; font-weight: 800; }
+.pill.good { color: var(--good); background: rgba(110, 210, 141, .13); }
+.pill.bad { color: var(--bad); background: rgba(230, 107, 98, .13); }
+.pill.info { color: var(--accent2); background: rgba(142, 209, 162, .13); }
+.log { max-height: 210px; overflow: auto; color: var(--muted); font-size: 12px; line-height: 1.7; }
+.log div { padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,.06); }
+.big { color: var(--accent); font-size: 38px; font-weight: 800; }
+.qtext { margin: 8px 0 15px; font-size: 18px; font-weight: 700; line-height: 1.5; }
+.opt { display: block; margin-top: 8px; text-align: left; }
+.err { min-height: 18px; margin-top: 8px; color: var(--bad); font-size: 13px; }
+.badge-team { color: var(--accent2); font-weight: 800; }
+
+.tile span {
+  font-size: 0;
+  white-space: normal;
+  line-height: 1.15;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+.tile span::after {
+  font-size: clamp(7px, 1.15vw, 11px);
+  font-weight: 700;
+  color: #f5f7ed;
+  display: block;
+  max-width: 100%;
+  white-space: normal;
+  line-height: 1.12;
+}
+
+.tile:nth-child(1) span::after { content: 'Pác Bó'; }
+.tile:nth-child(2) span::after { content: 'Tân Trào'; }
+.tile:nth-child(3) span::after { content: 'ATK Định Hóa'; }
+.tile:nth-child(4) span::after { content: 'Chợ Đồn'; }
+.tile:nth-child(5) span::after { content: 'Việt Bắc'; }
+.tile:nth-child(6) span::after { content: 'Chiến khu Ba Đình'; }
+.tile:nth-child(7) span::after { content: 'Chiến khu Vần'; }
+.tile:nth-child(8) span::after { content: 'Chiến khu Đông Triều'; }
+.tile:nth-child(9) span::after { content: 'Chiến khu D'; }
+.tile:nth-child(10) span::after { content: 'Đồng Tháp Mười'; }
+.tile:nth-child(11) span::after { content: 'U Minh'; }
+.tile:nth-child(12) span::after { content: 'Điện Biên Phủ'; }
+.tile:nth-child(13) span::after { content: 'Vĩnh Linh'; }
+.tile:nth-child(14) span::after { content: 'Vịnh Mốc'; }
+.tile:nth-child(15) span::after { content: 'Khe Sanh'; }
+.tile:nth-child(16) span::after { content: 'Đường Trường Sơn'; }
+.tile:nth-child(17) span::after { content: 'Ngã ba Đồng Lộc'; }
+.tile:nth-child(18) span::after { content: 'Hang Tám Cô'; }
+.tile:nth-child(19) span::after { content: 'Củ Chi'; }
+.tile:nth-child(20) span::after { content: 'Trung ương Cục miền Nam'; }
+.tile:nth-child(21) span::after { content: 'Dương Minh Châu'; }
+.tile:nth-child(22) span::after { content: 'Rừng Sác'; }
+.tile:nth-child(23) span::after { content: 'Bến Dược'; }
+.tile:nth-child(24) span::after { content: 'Thành cổ Quảng Trị'; }
+.tile:nth-child(25) span::after { content: 'Quảng Trị'; }
+.tile:nth-child(26) span::after { content: 'Tây Nguyên'; }
+.tile:nth-child(27) span::after { content: 'Đường 9 – Nam Lào'; }
+.tile:nth-child(28) span::after { content: 'Xuân Lộc'; }
+.tile:nth-child(29) span::after { content: 'Dinh Độc Lập'; }
+.tile:nth-child(30) span::after { content: 'Sài Gòn'; }
+
+@keyframes targetPulse {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(142, 209, 162, .12); }
+  50% { box-shadow: 0 0 0 5px rgba(142, 209, 162, .04), 0 0 24px rgba(142, 209, 162, .3); }
+}
+
+@media (max-width: 640px) {
+  .wrap { width: calc(100% - 20px); padding-top: 15px; }
+  .card { padding: 16px; }
+  .grid30 { gap: 5px; padding: 8px; }
+  .tile { border-radius: 7px; }
+  .tile b { font-size: 11px; }
+  .tile span::after { font-size: 6.5px; }
+  .teamlist { grid-template-columns: 1fr; }
+  .card::after { display: none; }
+}
