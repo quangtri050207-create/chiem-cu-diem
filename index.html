@@ -40,6 +40,7 @@
         return;
       }
 
+      // team.html sẽ dùng chính hai thông tin này để xác thực qua Socket.IO.
       sessionStorage.setItem('teamUsername', username);
       sessionStorage.setItem('teamPassword', password);
       loginErr.textContent = '';

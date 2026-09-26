@@ -32,18 +32,38 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
 const params = new URLSearchParams(location.search);
-const teamId = params.get('team');
-if (!teamId) location.href = '/';
+// Không dùng teamId trên URL: server phải xác định đội từ tài khoản đăng nhập.
+const username = (sessionStorage.getItem('teamUsername') || '').trim();
+const password = sessionStorage.getItem('teamPassword') || '';
+let teamId = params.get('team');
+if (!username || !password) location.href = '/';
 const socket = io();
 let state = null;
 
-socket.on('connect', () => socket.emit('join', { role: 'team', teamId }));
-socket.on('joined', d => { document.getElementById('teamName').textContent = d.teams[teamId].name; });
-socket.on('joinError', msg => alert(msg));
-socket.on('state', s => { state = s; render(); });
+socket.on('connect', () => {
+  // server.js nhận username/password, không nhận teamId.
+  socket.emit('join', { role: 'team', username, password });
+});
+socket.on('joined', d => {
+  teamId = d.teamId || d.id || teamId;
+  if (teamId && d.teams && d.teams[teamId]) {
+    document.getElementById('teamName').textContent = d.teams[teamId].name;
+  }
+});
+socket.on('joinError', msg => {
+  alert(msg);
+  sessionStorage.removeItem('teamUsername');
+  sessionStorage.removeItem('teamPassword');
+  location.href = '/';
+});
+socket.on('state', s => {
+  if (!teamId || !s.teams || !s.teams[teamId]) return;
+  state = s;
+  render();
+});
 
 function render() {
-  if (!state) return;
+  if (!state || !teamId || !state.teams[teamId]) return;
   const me = state.teams[teamId];
   document.getElementById('teamName').textContent = me.name;
   document.getElementById('troops').textContent = me.troops;
