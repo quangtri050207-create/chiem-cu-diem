@@ -11,7 +11,7 @@
     .grid30 .tile { font-size: 14px; }
     .grid30 .tile b { font-size: 18px; }
     #status { font-size: 20px; font-weight: 700; color: var(--accent2); text-align: center; margin-bottom: 10px; }
-    #countdown { display: inline-block; margin-top: 8px; color: var(--accent); font-size: 24px; font-weight: 800; }
+    #countdown { display: inline-block; margin-top: 8px; color: var(--accent); font-size: 24px; font-weight: 800; text-align: center; width: 100%; }
     @media (max-width: 900px) { .wrap.wide { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -40,9 +40,26 @@
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
+    const TEAM_COLORS = {t1:'team-t1',t2:'team-t2',t3:'team-t3',t4:'team-t4',t5:'team-t5',t6:'team-t6'};
     const socket = io();
+    let countdownInterval = null;
+    
     socket.on('connect', () => socket.emit('join', { role: 'screen' }));
     socket.on('state', s => render(s));
+
+    function startCountdown(endTime) {
+      const countdownEl = document.getElementById('countdown');
+      if (countdownInterval) clearInterval(countdownInterval);
+      
+      countdownInterval = setInterval(() => {
+        const remaining = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
+        countdownEl.textContent = `⏱️ Đấu giá: ${remaining}s`;
+        if (remaining <= 0) {
+          clearInterval(countdownInterval);
+          countdownEl.textContent = '-';
+        }
+      }, 100);
+    }
 
     function render(s) {
       const statusMap = {
@@ -57,15 +74,18 @@
       document.getElementById('status').textContent = statusMap[s.phase] || '';
 
       if (s.phase === 'bidding' && s.bidEndsAt) {
-        const remaining = Math.max(0, Math.ceil((s.bidEndsAt - Date.now()) / 1000));
-        document.getElementById('countdown').textContent = `Đặt quân: ${remaining}s`;
+        startCountdown(s.bidEndsAt);
       } else {
+        if (countdownInterval) clearInterval(countdownInterval);
         document.getElementById('countdown').textContent = '-';
       }
 
       document.getElementById('board').innerHTML = '<div class="grid30">' + s.tiles.map(t => {
         const cls = ['tile'];
-        if (t.owner) cls.push('owned');
+        if (t.owner) {
+          cls.push('owned');
+          cls.push(TEAM_COLORS[t.owner]);
+        }
         if (t.bonus) cls.push('bonus');
         if (t.type !== 'hidden' && t.type !== 'normal') cls.push('special');
         if (s.currentTileIdx === t.idx) cls.push('pickable');
@@ -74,7 +94,7 @@
       }).join('') + '</div>';
 
       document.getElementById('scoreboard').innerHTML = s.scoreboard.map((t, i) =>
-        `<div class="teamchip"><span class="pill info">#${i + 1}</span> <b>${t.name}</b>${t.score}★ · ${t.troops} quân</div>`
+        `<div class="teamchip ${TEAM_COLORS[t.id]}"><span class="pill info">#${i + 1}</span> <b>${t.name}</b>${t.score}★ · ${t.troops} quân</div>`
       ).join('');
 
       document.getElementById('log').innerHTML = s.log.slice().reverse().map(l => `<div>• ${l}</div>`).join('');
@@ -83,14 +103,6 @@
         document.getElementById('status').innerHTML += `<div class="qtext" style="font-size:16px;margin-top:8px">${s.currentQuestion.question}</div>`;
       }
     }
-
-    setInterval(() => {
-      const statusNode = document.getElementById('status');
-      const countdownNode = document.getElementById('countdown');
-      if (statusNode && statusNode.dataset.state === 'bidding') {
-        // no-op; keep UI refreshed on state updates
-      }
-    }, 1000);
   </script>
 </body>
 </html>

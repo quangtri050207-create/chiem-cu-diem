@@ -12,6 +12,12 @@
   --muted: #9eac99;
   --line: rgba(178, 197, 157, .24);
   --map: #263a27;
+  --team-t1: #ff6b6b;
+  --team-t2: #4ecdc4;
+  --team-t3: #ffe66d;
+  --team-t4: #95e1d3;
+  --team-t5: #f38181;
+  --team-t6: #aa96da;
 }
 
 * { box-sizing: border-box; }
@@ -113,7 +119,7 @@ button:disabled { opacity: .45; cursor: not-allowed; transform: none; }
   flex-direction: column;
   padding: 5px;
   overflow: hidden;
-  border: 1px solid rgba(172, 198, 151, .35);
+  border: 2px solid rgba(172, 198, 151, .35);
   border-radius: 7px;
   color: #a9ba9f;
   background: linear-gradient(145deg, rgba(52, 73, 49, .95), rgba(23, 38, 25, .96));
@@ -125,7 +131,15 @@ button:disabled { opacity: .45; cursor: not-allowed; transform: none; }
 .tile b { z-index: 1; color: var(--text); font-size: 15px; }
 .tile span { z-index: 1; max-width: 100%; overflow: hidden; font-size: 9px; text-align: center; text-overflow: ellipsis; white-space: nowrap; }
 .tile:hover { border-color: var(--accent); transform: translateY(-2px); }
+
 .tile.owned { border-color: var(--accent); background: linear-gradient(145deg, rgba(132, 103, 45, .72), rgba(57, 61, 29, .95)); }
+.tile.owned.team-t1 { background: linear-gradient(145deg, rgba(255, 107, 107, .5), rgba(139, 40, 40, .8)); border-color: var(--team-t1); }
+.tile.owned.team-t2 { background: linear-gradient(145deg, rgba(78, 205, 196, .5), rgba(30, 90, 85, .8)); border-color: var(--team-t2); }
+.tile.owned.team-t3 { background: linear-gradient(145deg, rgba(255, 230, 109, .5), rgba(180, 140, 30, .8)); border-color: var(--team-t3); }
+.tile.owned.team-t4 { background: linear-gradient(145deg, rgba(149, 225, 211, .5), rgba(70, 140, 120, .8)); border-color: var(--team-t4); }
+.tile.owned.team-t5 { background: linear-gradient(145deg, rgba(243, 129, 129, .5), rgba(150, 50, 50, .8)); border-color: var(--team-t5); }
+.tile.owned.team-t6 { background: linear-gradient(145deg, rgba(170, 150, 218, .5), rgba(100, 70, 150, .8)); border-color: var(--team-t6); }
+
 .tile.pickable { border-color: var(--accent2); box-shadow: 0 0 0 2px rgba(142,209,162,.15), 0 0 18px rgba(142,209,162,.22); cursor: pointer; animation: targetPulse 1.8s infinite; }
 .tile.special { border-style: dashed; border-color: #bb91da; }
 .tile.bonus::after { content: '★'; position: absolute; top: 3px; right: 5px; color: var(--accent); font-size: 10px; }
@@ -133,6 +147,12 @@ button:disabled { opacity: .45; cursor: not-allowed; transform: none; }
 .teamlist { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
 .teamchip { position: relative; min-height: 68px; padding: 10px 10px 10px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel2); font-size: 12px; }
 .teamchip::before { content: ''; position: absolute; inset: 9px auto 9px 0; width: 3px; background: var(--accent2); }
+.teamchip.team-t1::before { background: var(--team-t1); }
+.teamchip.team-t2::before { background: var(--team-t2); }
+.teamchip.team-t3::before { background: var(--team-t3); }
+.teamchip.team-t4::before { background: var(--team-t4); }
+.teamchip.team-t5::before { background: var(--team-t5); }
+.teamchip.team-t6::before { background: var(--team-t6); }
 .teamchip b { display: block; margin: 4px 0; font-size: 14px; }
 
 .pill { display: inline-block; padding: 4px 9px; border-radius: 99px; font-size: 11px; font-weight: 800; }

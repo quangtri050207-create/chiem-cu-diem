@@ -15,6 +15,7 @@
 
   <div class="card" id="phaseCard">
     <h2 id="phaseTitle">Đang chờ ban tổ chức bắt đầu...</h2>
+    <div id="countdown" style="display:none;font-size:20px;font-weight:800;color:var(--accent);margin-bottom:12px;text-align:center">⏱️ <span id="countdownValue">-</span>s</div>
     <div id="phaseBody"></div>
   </div>
 
@@ -31,17 +32,17 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
+const TEAM_COLORS = {t1:'team-t1',t2:'team-t2',t3:'team-t3',t4:'team-t4',t5:'team-t5',t6:'team-t6'};
 const params = new URLSearchParams(location.search);
-// Không dùng teamId trên URL: server phải xác định đội từ tài khoản đăng nhập.
 const username = (sessionStorage.getItem('teamUsername') || '').trim();
 const password = sessionStorage.getItem('teamPassword') || '';
 let teamId = params.get('team');
 if (!username || !password) location.href = '/';
 const socket = io();
 let state = null;
+let countdownInterval = null;
 
 socket.on('connect', () => {
-  // server.js nhận username/password, không nhận teamId.
   socket.emit('join', { role: 'team', username, password });
 });
 socket.on('joined', d => {
@@ -62,6 +63,22 @@ socket.on('state', s => {
   render();
 });
 
+function startCountdown(endTime) {
+  const countdownEl = document.getElementById('countdown');
+  const countdownValue = document.getElementById('countdownValue');
+  countdownEl.style.display = 'block';
+  if (countdownInterval) clearInterval(countdownInterval);
+  
+  countdownInterval = setInterval(() => {
+    const remaining = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
+    countdownValue.textContent = remaining;
+    if (remaining <= 0) {
+      clearInterval(countdownInterval);
+      countdownEl.style.display = 'none';
+    }
+  }, 100);
+}
+
 function render() {
   if (!state || !teamId || !state.teams[teamId]) return;
   const me = state.teams[teamId];
@@ -71,7 +88,7 @@ function render() {
   document.getElementById('score').textContent = mySb ? mySb.score : 0;
 
   document.getElementById('scoreboard').innerHTML = state.scoreboard.map((t,i) =>
-    `<div class="teamchip"><span class="pill info">#${i+1}</span> <b>${t.name}${t.id===teamId?' (bạn)':''}</b>${t.score}★ · ${t.troops} quân</div>`
+    `<div class="teamchip ${TEAM_COLORS[t.id]}"><span class="pill info">#${i+1}</span> <b>${t.name}${t.id===teamId?' (bạn)':''}</b>${t.score}★ · ${t.troops} quân</div>`
   ).join('');
 
   document.getElementById('log').innerHTML = state.log.slice().reverse().map(l => `<div>• ${l}</div>`).join('');
@@ -83,9 +100,11 @@ function render() {
   if (state.phase === 'lobby') {
     title.textContent = 'Chưa bắt đầu';
     body.innerHTML = '<div class="sub">Chờ ban tổ chức nhấn "Bắt đầu trận đấu".</div>';
+    document.getElementById('countdown').style.display = 'none';
 
   } else if (state.phase === 'bidding') {
     title.textContent = `Vòng ${state.round}: Đấu giá bí mật`;
+    if (state.bidEndsAt) startCountdown(state.bidEndsAt);
     if (state.bidSubmitted[teamId]) {
       const cnt = Object.values(state.bidSubmitted).filter(Boolean).length;
       body.innerHTML = `<div class="pill good">Đã đặt: ${state.myBid} quân</div><div class="sub" style="margin-top:8px">Đang chờ các đội khác (${cnt}/6 đã đặt)...</div>`;
@@ -105,6 +124,7 @@ function render() {
     }
 
   } else if (state.phase === 'tile_select') {
+    document.getElementById('countdown').style.display = 'none';
     if (isWinner) {
       title.textContent = '🎉 Đội bạn thắng đấu giá! Chọn 1 ô đất còn trống';
       body.innerHTML = tilesGrid(state.tiles, t => !t.owner, 'team:selectTile', 'tileIdx');
@@ -114,6 +134,7 @@ function render() {
     }
 
   } else if (state.phase === 'question') {
+    document.getElementById('countdown').style.display = 'none';
     if (isWinner && state.currentQuestion) {
       title.textContent = `Ô ${state.currentTileIdx+1} — Trả lời để chiếm đất!`;
       body.innerHTML = `<div class="qtext">${state.currentQuestion.question}</div>` +
@@ -131,6 +152,7 @@ function render() {
     }
 
   } else if (state.phase === 'special') {
+    document.getElementById('countdown').style.display = 'none';
     const sp = state.pendingSpecial;
     if (sp && sp.teamId === teamId) {
       if (sp.type === 'delete') {
@@ -160,11 +182,13 @@ function render() {
     }
 
   } else if (state.phase === 'round_end') {
+    document.getElementById('countdown').style.display = 'none';
     title.textContent = state.lastAnswerCorrect === false ? '❌ Trả lời sai — ô bỏ trống' :
       (state.lastAnswerCorrect === true ? '✅ Chiếm đất thành công!' : 'Kết thúc vòng');
     body.innerHTML = '<div class="sub">Chờ ban tổ chức bắt đầu vòng tiếp theo.</div>';
 
   } else if (state.phase === 'game_over') {
+    document.getElementById('countdown').style.display = 'none';
     title.textContent = '🏆 Trận đấu kết thúc!';
     const top = state.scoreboard[0];
     body.innerHTML = `<div class="center"><div class="big">${top.name} chiến thắng!</div><div class="sub">${top.score} sao</div></div>`;
@@ -175,7 +199,10 @@ function tilesGrid(tiles, pickableFn, event, key) {
   return '<div class="grid30">' + tiles.map(t => {
     const pickable = event && pickableFn(t);
     const cls = ['tile'];
-    if (t.owner) cls.push('owned');
+    if (t.owner) {
+      cls.push('owned');
+      cls.push(TEAM_COLORS[t.owner]);
+    }
     if (t.bonus) cls.push('bonus');
     if (t.type !== 'hidden' && t.type !== 'normal') cls.push('special');
     if (pickable) cls.push('pickable');
